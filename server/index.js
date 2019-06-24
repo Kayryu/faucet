@@ -1,0 +1,70 @@
+const express = require('express')
+const next = require('next')
+const LRUCache = require('lru-cache')
+const { nativeTransfer } = require('./fetch')
+const config = require('../config')
+
+const port = parseInt(process.env.PORT, 10) || 3000
+const dev = process.env.NODE_ENV !== 'production'
+const app = next({ dev })
+const handle = app.getRequestHandler()
+
+const ssrCache = new LRUCache({
+    max: 1000, // cache item count
+    maxAge: 1000 * 60 * 60, // 1 hour
+})
+
+app.prepare()
+    .then(() => {
+        const server = express()
+
+        server.get('/', async (req, res) => {
+            renderAndCache(req, res, '/', { ...req.query })
+        })
+
+        server.get('/coin', (req, res) => {
+            // can use `req` to control ip access
+            res.send('Hello World!')
+        })
+
+        // let next.js deal with them
+        server.get('*', (req, res) => {
+            console.log("to next.js");
+            return handle(req, res)
+        })
+
+        server.listen(port, (err) => {
+            if (err) throw err
+            console.log(`> Ready on http://localhost:${port}`)
+        })
+    })
+
+const getCacheKey = req => `${req.url}`
+
+// 缓存并渲染页面，具体是重新渲染还是使用缓存
+async function renderAndCache(req, res, pagePath, queryParams) {
+    const key = getCacheKey(req)
+    if (ssrCache.has(key)) {
+        res.setHeader('x-cache', 'HIT')
+        res.send(ssrCache.get(key))
+        return
+    }
+
+    try {
+        const html = await app.renderToHTML(req, res, pagePath, queryParams)
+
+        // Something is wrong with the request, let's skip the cache
+        if (res.statusCode !== 200) {
+            res.send(html)
+            return
+        }
+
+        // Let's cache this page
+        ssrCache.set(key, html)
+
+        res.setHeader('x-cache', 'MISS')
+        res.send(html)
+    } catch (err) {
+        app.renderError(err, req, res, pagePath, queryParams)
+    }
+}
