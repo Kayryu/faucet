@@ -1,7 +1,7 @@
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { Keyring } = require('@polkadot/keyring');
 const { hexToU8a } = require('@polkadot/util');
-const { config } = require('../config')
+const config = require('../backend.config')
 
 const url = config.url;
 

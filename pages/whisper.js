@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-unfetch'
-const { config } = require('../config')
+const config = require('../frontend.config')
 
 const location = config.location;
 

@@ -3,7 +3,7 @@ const next = require('next')
 const LRUCache = require('lru-cache')
 const { nativeTransfer } = require('./polka')
 const { CoinCache, IPState} = require('./cache')
-const { config } = require('../config')
+const config = require('../backend.config')
 
 const port = parseInt(process.env.PORT, 10) || 8888
 const dev = process.env.NODE_ENV !== 'production'

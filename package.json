@@ -20,7 +20,8 @@
     "scripts": {
         "dev": "next",
         "build": "next build",
-        "start": "next start"
+        "start": "next start",
+        "go": "node ./server/index.js"
     },
     "author": "",
     "license": "ISC"
