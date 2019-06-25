@@ -19,17 +19,19 @@ app.prepare()
         const server = express()
 
         server.get('/', async (req, res) => {
+            console.log('cache')
             renderAndCache(req, res, '/', { ...req.query })
         })
 
-        server.get('/coin', (req, res) => {
+        server.get('/coin', async (req, res) => {
+            console.log(req.query.address);
+            let ret = nativeTransfer()
             // can use `req` to control ip access
-            res.send('Hello World!')
+            res.send({ ok: 'succeed' })
         })
 
         // let next.js deal with them
-        server.get('*', (req, res) => {
-            console.log("to next.js");
+        server.get('*', async (req, res) => {
             return handle(req, res)
         })
 

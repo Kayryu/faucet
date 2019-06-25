@@ -1,15 +1,17 @@
 import React from 'react'
+import { requestCoin } from './whisper';
 
 export default class extends React.Component {
-
-    onHandleClick() {
-        console.log('链接被点击');
+    async onHandleClick() {
+        let address = '5HZEUMHMZFLN25sJw4yHCK17rtaX4qztLMnXTZVM5rbp9LmV';
+        let json = await requestCoin(address);
+        console.log(json);
     }
     render() {
         return (
             <div>
                 <div>
-                    <title>My page title</title>
+                    <title>Faucet</title>
                     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
                 </div>
                 <div>
