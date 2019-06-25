@@ -1,54 +1,67 @@
 
-type IPQ = {
-    ip : "",
-    time : 1,
-    count : 2,
-}
+// type IPQ = {
+//     ip : "",
+//     time : 1,
+//     count : 2,
+// }
 
-enum IPState {
+const IPState = {
     // Never receive coin
-    UnKnown,
+    UnKnown : 0,
     // Reach maximum count in specified time
-    Locked,
-    // Can 
-    Release,
+    Locked : 1,
+    // Can receive coin
+    Release : 2,
     // End freezing, need reset cache
-    UnLocked
+    UnLocked : 3
 }
 
-export class CoinCache {
+class CoinCache {
     
-    Vec<IPQ> infos;
     constructor(maxCount, lockTime) {
-        this.maxCount = 5;
-        this.lockTime = 3600; //s
+        this.infos = [];
+        this.maxCount = maxCount;
+        this.lockTime = lockTime; //s
     }
 
+    exist(ip) {
+        return this.infos.find((v) => v.ip == ip) != undefined;
+    }
+
+    get(ip) {
+        return this.infos.find((v) => v.ip == ip);
+    }
+
+    now() {
+        var date = new Date();
+        return date.getTime()
+    }
     put(ip) {
-        if (!this.infos.exist(ip)){
+        if (!this.exist(ip)){
+            
             let info = {
                 ip: ip,
-                time: now + this.lockTime,
+                time: this.now() + this.lockTime * 1000,
                 count: 1
             }
-            this.infos.add(info)
+            this.infos.push(info)
         } else {
-            let info  = infos[ip];
+            let info  = this.get(ip);
             info.count++;
         }
     }
 
     check(ip){
-        if (this.infos.exist(ip)) {
-            let info = this.infos[ip];
-            if (info.time > now) {
-                if (info.count > this.maxCount) {
+        if (this.exist(ip)) {
+            let info = this.get(ip);
+            if (info.time > this.now()) {
+                if (info.count >= this.maxCount) {
                     return IPState.Locked;
                 } else {
                     return IPState.Release;
                 }
             } else {
-                retrun IPState.UnLocked;
+                return IPState.UnLocked;
             }
         } else {
             return IPState.UnKnown;
@@ -56,11 +69,16 @@ export class CoinCache {
     }
 
     time(ip) {
-        if (this.infos.exist(ip)) {
-            let oTime = this.infos[ip].time;
+        if (this.exist(ip)) {
+            let oTime = this.get(ip).time;
             return max(oTime - now, 0)
         } else {
             return 0;
         }
     }
+}
+
+module.exports = {
+    IPState,
+    CoinCache
 }

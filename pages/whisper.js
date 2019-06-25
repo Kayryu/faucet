@@ -1,6 +1,7 @@
 import fetch from 'isomorphic-unfetch'
+const { config } = require('../config')
 
-const location = 'http://localhost:3000';
+const location = config.location;
 
 export async function requestCoin(address) {
     console.log(fetch);

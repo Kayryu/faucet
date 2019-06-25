@@ -1,31 +1,46 @@
 const { ApiPromise, WsProvider } = require('@polkadot/api');
 const { Keyring } = require('@polkadot/keyring');
 const { hexToU8a } = require('@polkadot/util');
+const { config } = require('../config')
 
-const getApi = async (url) => {
+const url = config.url;
+
+const getApi = async () => {
+    console.log(url);
     const provider = new WsProvider(url);
     const api = await ApiPromise.create(provider);
     return api;
 }
 
-const nativeTransfer = async (url, key, recipient, value) => {
-    //TODO verify key and recipient.
+const nativeTransfer = async (key, recipient, value) => {
     const api = await getApi(url);
-
     const keyring = new Keyring();
     const from = keyring.addFromSeed(hexToU8a(key), "", 'sr25519');
 
+    // check format of recipient
+    try {
+        keyring.decodeAddress(recipient);
+    } catch(e) {
+        return 'Invalid decoded address length';
+    }
+    
     let doWithListener = () => {
         return new Promise(function (resolve, reject) {
             api.tx.balances
                 .transfer(recipient, value)
                 .signAndSend(from, (({ events = [], status }) => {
                     if (status.isFinalized) {
-                        let result = "";
-                        events.forEach(({ phase, event: { data, method, section } }) => {
-                            result += '\t' + phase.toString() + `: ${section}.${method}` + data.toString();
+                        let fets = events.map(({ phase, event: { data, method, section } }) => {
+                            return {
+                                section: section,
+                                method: method,
+                                data: data.toString(),
+                            }
                         });
-                        resolve(result);
+                        console.log(fets);
+
+                        let item = fets.find((event) => {return(event.section === 'system' && event.method === 'ExtrinsicSuccess');});
+                        resolve(item ? 'Succeed': 'Failed');
                     }
                 })).catch(err => {
                     reject("transfer error.");

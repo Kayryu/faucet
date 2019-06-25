@@ -1,6 +1,7 @@
 const config = {
-    url: "ws://localhost:9944",
-    key: "0x2419f1ccfec08adb54027e0bcb3ce2d4fa49cdc596cce68c5e051ccb751c2e00"
+    url : "ws://122.112.207.62:9944/",
+    key: "0x311f2d29d68cc7ae6101c3d989f89bb0698c280ddf5ce3a0321f914bda553257",
+    location: 'http://localhost:8888',
 };
 
 module.exports = {

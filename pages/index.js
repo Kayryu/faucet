@@ -2,24 +2,32 @@ import React from 'react'
 import { requestCoin } from './whisper';
 
 export default class extends React.Component {
-    async onHandleClick() {
-        let address = '5HZEUMHMZFLN25sJw4yHCK17rtaX4qztLMnXTZVM5rbp9LmV';
+
+    async receiveCoin(e) {
+        e.preventDefault();
+        const address = this.refs.address.value;
+        if (address.length == 0) {
+            return
+        }
         let json = await requestCoin(address);
         console.log(json);
+        alert(json.message);
     }
-    
+
     render() {
         return (
             <div>
                 <div>
-                    <title>Faucet</title>
+                    <title>Ladder Network Faucet</title>
                     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
                 </div>
                 <div>
-                    <p>输入你的Ladder地址领取测试币.</p>
-                    <p>接收地址：</p>
-                    <text></text>
-                    <button onClick={this.onHandleClick}>领取</button>
+                    <p>Enter your address to receive the test coin.</p>
+                    <form >
+                        <span>Receipt：</span>
+                        <input type="text" ref="address" maxLength="66" placeholder="input address" />
+                        <button onClick={this.receiveCoin.bind(this)}>领取</button>
+                    </form>
                 </div>
             </div>
         )
