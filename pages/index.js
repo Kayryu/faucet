@@ -7,6 +7,7 @@ export default class extends React.Component {
         let json = await requestCoin(address);
         console.log(json);
     }
+    
     render() {
         return (
             <div>

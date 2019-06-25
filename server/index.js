@@ -1,18 +1,13 @@
 const express = require('express')
 const next = require('next')
 const LRUCache = require('lru-cache')
-const { nativeTransfer } = require('./fetch')
+const { nativeTransfer } = require('./polka')
 const config = require('../config')
 
 const port = parseInt(process.env.PORT, 10) || 3000
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
-
-const ssrCache = new LRUCache({
-    max: 1000, // cache item count
-    maxAge: 1000 * 60 * 60, // 1 hour
-})
 
 app.prepare()
     .then(() => {
@@ -24,8 +19,9 @@ app.prepare()
         })
 
         server.get('/coin', async (req, res) => {
-            console.log(req.query.address);
-            let ret = nativeTransfer()
+            console.log();
+            const key = '0x311f2d29d68cc7ae6101c3d989f89bb0698c280ddf5ce3a0321f914bda553257';
+            let ret = nativeTransfer(key, req.query.address, 2000000);
             // can use `req` to control ip access
             res.send({ ok: 'succeed' })
         })
@@ -41,9 +37,13 @@ app.prepare()
         })
     })
 
+const ssrCache = new LRUCache({
+        max: 1000, // cache item count
+        maxAge: 1000 * 60 * 60, // 1 hour
+    })
+
 const getCacheKey = req => `${req.url}`
 
-// 缓存并渲染页面，具体是重新渲染还是使用缓存
 async function renderAndCache(req, res, pagePath, queryParams) {
     const key = getCacheKey(req)
     if (ssrCache.has(key)) {
