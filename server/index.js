@@ -5,7 +5,7 @@ const { nativeTransfer } = require('./polka')
 const { CoinCache, IPState} = require('./cache')
 const config = require('../backend.config')
 
-const port = parseInt(process.env.PORT, 10) || 8888
+const port = parseInt(process.env.PORT, 10) || 9955
 const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
@@ -29,7 +29,12 @@ app.prepare()
                 return;
             } else {
                 coinCache.put(ip);
-                let ret = await nativeTransfer(config.key, address, 2000000);
+                let ret;
+                try {
+                    ret = await nativeTransfer(config.key, address, 2000000);
+                } catch (e) {
+                    console.log(e)
+                }  
                 console.log(ret);
                 res.send({ message : ret })
             }

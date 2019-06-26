@@ -1,4 +1,5 @@
 import fetch from 'isomorphic-unfetch'
+import { compactStripLength } from '@polkadot/util';
 const config = require('../frontend.config')
 
 const location = config.location;
@@ -6,7 +7,12 @@ const location = config.location;
 export async function requestCoin(address) {
     console.log(fetch);
     let url = location + '/coin?address=' + address;
-    let result = await fetch(url).then(handleResponse);
+    let result;
+    try {
+        result = await fetch(url).then(handleResponse);
+    } catch (err) {
+        throw err;
+    }
     return result;
 }
 

@@ -3,15 +3,20 @@ import { requestCoin } from './whisper';
 
 export default class extends React.Component {
 
-    async receiveCoin(e) {
+    receiveCoin(e) {
         e.preventDefault();
+        // TODO loading
         const address = this.refs.address.value;
         if (address.length == 0) {
+            alert('Please input your address.');
             return
         }
-        let json = await requestCoin(address);
-        console.log(json);
-        alert(json.message);
+        requestCoin(address).then((json) => {
+            console.log(json);
+            alert(json.message);
+        }).catch((e) => {
+            alert(e);
+        });
     }
 
     render() {
