@@ -28,15 +28,14 @@ app.prepare()
                 res.send({ message : "Reach maximum count in specified time, Please retry after one hour." })
                 return;
             } else {
-                coinCache.put(ip);
-                let ret;
-                try {
-                    ret = await nativeTransfer(config.key, address, 2000000);
-                } catch (e) {
-                    console.log(e)
-                }  
-                console.log(ret);
-                res.send({ message : ret })
+                nativeTransfer(config.key, address, 2000000).then((ret) => {
+                    coinCache.put(ip);
+                    console.log(ret);
+                    res.send({ message : ret })
+                }).catch( (e) => {
+                    console.log(e);
+                    res.send({ message : e })
+                })
             }
         })
 

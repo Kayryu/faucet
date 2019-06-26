@@ -5,7 +5,8 @@ export default class extends React.Component {
 
     receiveCoin(e) {
         e.preventDefault();
-        // TODO loading
+        // TODO loading and reenter
+
         const address = this.refs.address.value;
         if (address.length == 0) {
             alert('Please input your address.');

@@ -21,7 +21,7 @@ const nativeTransfer = async (key, recipient, value) => {
     try {
         keyring.decodeAddress(recipient);
     } catch(e) {
-        return 'Invalid decoded address length';
+        throw 'Invalid decoded address length';
     }
     
     let doWithListener = () => {
