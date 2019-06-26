@@ -27,14 +27,34 @@ export default class extends React.Component {
                     <title>Ladder Network Faucet</title>
                     <meta name="viewport" content="initial-scale=1.0, width=device-width" />
                 </div>
-                <div>
+                <div className="center">
+                    <img src="/static/faucet.png" className="faucet"/>
                     <p>Enter your address to receive the test coin.</p>
                     <form >
                         <span>Receipt：</span>
-                        <input type="text" ref="address" maxLength="66" placeholder="input address" />
-                        <button onClick={this.receiveCoin.bind(this)}>领取</button>
-                    </form>
+                        <span>
+                            <input type="text" ref="address" maxLength="66" placeholder="input address" />
+                            <button onClick={this.receiveCoin.bind(this)}>Drop!</button>
+                        </span>
+                    </form>
                 </div>
+                <style jsx>{`
+                    h1, a, p {
+                        font-family: "Arial";
+                    }
+                    input {
+                        width:70%;
+                    }
+                    .center {
+                        margin:auto;
+                        width:70%;
+                        background-color:#b0e0e6;
+                    }
+                    .faucet {
+                        width:400px;
+                        height:400px;
+                    }
+                    `}</style>
             </div>
         )
     }

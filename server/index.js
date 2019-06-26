@@ -28,6 +28,9 @@ app.prepare()
                 res.send({ message : "Reach maximum count in specified time, Please retry after one hour." })
                 return;
             } else {
+                if (checkResult == IPState.UnLocked) {
+                    coinCache.delete(ip);
+                }
                 nativeTransfer(config.key, address, 2000000).then((ret) => {
                     coinCache.put(ip);
                     console.log(ret);

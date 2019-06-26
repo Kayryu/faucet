@@ -32,8 +32,15 @@ class CoinCache {
         return this.infos.find((v) => v.ip == ip);
     }
 
+    delete(ip) {
+        let index = this.infos.findIndex((v) => {return v.ip == ip;});
+        if (index != -1) {
+            this.infos.splice(index, 1);
+        }
+    }
+
     now() {
-        var date = new Date();
+        let date = new Date();
         return date.getTime()
     }
     put(ip) {

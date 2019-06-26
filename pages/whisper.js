@@ -1,5 +1,4 @@
 import fetch from 'isomorphic-unfetch'
-import { compactStripLength } from '@polkadot/util';
 const config = require('../frontend.config')
 
 const location = config.location;
