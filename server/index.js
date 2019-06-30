@@ -1,7 +1,7 @@
 const express = require('express')
 const next = require('next')
 const LRUCache = require('lru-cache')
-const { nativeTransfer } = require('./polka')
+const { nativeTransfer, getApi } = require('./polka')
 const { CoinCache, IPState} = require('./cache')
 const config = require('../backend.config')
 
@@ -10,11 +10,12 @@ const dev = process.env.NODE_ENV !== 'production'
 const app = next({ dev })
 const handle = app.getRequestHandler()
 
-let coinCache = new CoinCache(4, 3600);
+let coinCache = new CoinCache(4, 3600 * 24);
 
 app.prepare()
-    .then(() => {
-        const server = express()
+    .then(async () => {
+        const server = express();
+        const api = await getApi();
 
         server.get('/', async (req, res) => {
             renderAndCache(req, res, '/', { ...req.query })
@@ -25,13 +26,13 @@ app.prepare()
             let address = req.query.address;
             let checkResult = coinCache.check(ip);
             if (checkResult == IPState.Locked) {
-                res.send({ message : "Reach maximum count in specified time, Please retry after one hour." })
+                res.send({ message : "Reach maximum count in specified time, Please retry after one day." })
                 return;
             } else {
                 if (checkResult == IPState.UnLocked) {
                     coinCache.delete(ip);
                 }
-                nativeTransfer(config.key, address, 2000000).then((ret) => {
+                nativeTransfer(api, config.key, address, 2000000).then((ret) => {
                     coinCache.put(ip);
                     console.log(ret);
                     res.send({ message : ret })

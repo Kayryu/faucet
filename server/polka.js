@@ -12,8 +12,7 @@ const getApi = async () => {
     return api;
 }
 
-const nativeTransfer = async (key, recipient, value) => {
-    const api = await getApi(url);
+const nativeTransfer = async (api, key, recipient, value) => {
     const keyring = new Keyring();
     const from = keyring.addFromSeed(hexToU8a(key), "", 'sr25519');
 
@@ -51,5 +50,6 @@ const nativeTransfer = async (key, recipient, value) => {
 }
 
 module.exports = {
-    nativeTransfer
+    nativeTransfer,
+    getApi
 }
