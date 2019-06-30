@@ -8,6 +8,11 @@ yarn
 yarn run go
 ``
 
+build docker
+```
+docker build . -t kazee/ladder-faucet
+```
+
 ## Usage
 
 run with docker.
