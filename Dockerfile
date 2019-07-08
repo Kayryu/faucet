@@ -9,4 +9,6 @@ COPY . .
 RUN yarn install
 RUN yarn build
 
+RUN [ "sh", "-c", "yarn run go" ]
+
 EXPOSE 8888

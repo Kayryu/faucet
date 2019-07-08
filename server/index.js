@@ -3,7 +3,6 @@ const next = require('next')
 const LRUCache = require('lru-cache')
 const { nativeTransfer, getApi } = require('./polka')
 const { CoinCache, IPState} = require('./cache')
-const config = require('../backend.config')
 
 const port = parseInt(process.env.PORT, 10) || 9955
 const dev = process.env.NODE_ENV !== 'production'
@@ -32,7 +31,7 @@ app.prepare()
                 if (checkResult == IPState.UnLocked) {
                     coinCache.delete(ip);
                 }
-                nativeTransfer(api, config.key, address, 2000000).then((ret) => {
+                nativeTransfer(api, address, 2000000).then((ret) => {
                     coinCache.put(ip);
                     console.log(ret);
                     res.send({ message : ret })

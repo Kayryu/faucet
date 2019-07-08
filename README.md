@@ -22,6 +22,7 @@ docker pull kazee/ladder-faucet.
 docker run -itd -p 9955:9955 -name ladder-faucet kazee/ladder-faucet
 
 docker exec -it ladder-faucet /bin/sh
+yarn run go
 ```
 
 ## Config

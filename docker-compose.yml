@@ -1,0 +1,10 @@
+version: '2.0'
+
+services:
+  faucet:
+    image: kazee/ladder-faucet
+    restart: always
+    ports:
+      - 9955:9955
+    environment:
+      - FAUCET_LOCATION="http://localhost:9955"

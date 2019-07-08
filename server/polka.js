@@ -3,7 +3,11 @@ const { Keyring } = require('@polkadot/keyring');
 const { hexToU8a } = require('@polkadot/util');
 const config = require('../backend.config')
 
-const url = config.url;
+const url = process.env.FAUCET_URL || config.url;
+const key = process.env.FAUCET_KEY || config.key;
+
+const keyring = new Keyring();
+const rich = keyring.addFromSeed(hexToU8a(key), "", 'sr25519');
 
 const getApi = async () => {
     console.log(url);
@@ -12,10 +16,7 @@ const getApi = async () => {
     return api;
 }
 
-const nativeTransfer = async (api, key, recipient, value) => {
-    const keyring = new Keyring();
-    const from = keyring.addFromSeed(hexToU8a(key), "", 'sr25519');
-
+const nativeTransfer = async (api, recipient, value) => {
     // check format of recipient
     try {
         keyring.decodeAddress(recipient);
@@ -27,7 +28,7 @@ const nativeTransfer = async (api, key, recipient, value) => {
         return new Promise(function (resolve, reject) {
             api.tx.balances
                 .transfer(recipient, value)
-                .signAndSend(from, (({ events = [], status }) => {
+                .signAndSend(rich, (({ events = [], status }) => {
                     if (status.isFinalized) {
                         let fets = events.map(({ phase, event: { data, method, section } }) => {
                             return {

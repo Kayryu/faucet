@@ -1,7 +1,7 @@
 import fetch from 'isomorphic-unfetch'
 const config = require('../frontend.config')
 
-const location = config.location;
+const location =  process.env.FAUCET_LOCATION || config.location;
 
 export async function requestCoin(address) {
     console.log(fetch);
